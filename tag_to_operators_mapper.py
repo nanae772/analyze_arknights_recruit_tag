@@ -33,8 +33,8 @@ def load_operator_list(file_name: str) -> list[Operator]:
 
     return res
 
-def invert_operator_list(operator_list: list) -> dict[str, set]:
-    tag_to_operators: dict[str, set] = defaultdict(set)
+def invert_operator_list(operator_list: list[Operator]) -> dict[str, set]:
+    tag_to_operators: dict[str, set[str]] = defaultdict(set)
     for op in operator_list:
         for tag in op.tags:
             tag_to_operators[tag].add(op.name)
