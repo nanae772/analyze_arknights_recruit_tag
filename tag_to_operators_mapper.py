@@ -59,6 +59,7 @@ def load_operator_list(file_name: str) -> list[Operator]:
         reader = csv.DictReader(file)
         for row in reader:
             tags = split_string_by_tags(row['募集タグ'], all_tag)
+            tags.append(f'{row['職業']}タイプ')
             if row['レアリティ'] == '6':
                 tags.append('上級エリート')
             elif row['レアリティ'] == '5':
