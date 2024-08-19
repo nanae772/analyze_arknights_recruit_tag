@@ -4,23 +4,23 @@ import logging
 
 class Operator(NamedTuple):
     name: str
-    tags: tuple[str]
+    tags: tuple[str,...]
     rarity: int
 
 
 def main():
     file_name = 'operators_in_recruitment_with_rarity.csv'
-    operator_list = load_operator_list(file_name)
-    tag_to_operators = invert_operator_list(operator_list)
+    operator_list: list[Operator] = load_operator_list(file_name)
+    tag_to_operators: dict[str, set[Operator]] = invert_operator_list(operator_list)
 
     tag_list = ['牽制', '火力', '狙撃タイプ', '防御', '範囲攻撃']
-    res = find_rare_operator_tag_combinations(tag_list, tag_to_operators)
+    res: list[dict[tuple[str,...], list[Operator]]] = find_rare_operator_tag_combinations(tag_list, tag_to_operators)
     print(*res, sep='\n')
 
 def find_rare_operator_tag_combinations(
         tag_list: list[str],
-        tag_to_operators: dict[str, list[Operator]]
-        ) -> list[dict[tuple[str], list[Operator]]]:
+        tag_to_operators: dict[str, set[Operator]]
+        ) -> list[dict[tuple[str,...], list[Operator]]]:
     if len(tag_list) < 5:
         logging.warning(f'募集タグの個数が少ないです: {len(tag_list)}個')
     tag_list.sort()
@@ -29,7 +29,7 @@ def find_rare_operator_tag_combinations(
 
     for comb in range(1 << len(tag_list)):
         tags_in_comb: list[str] = []
-        set_op = None
+        set_op: set[Operator] | None = None
         for i in range(len(tag_list)):
             if comb & (1 << i) > 0:
                 set_op = tag_to_operators[tag_list[i]] if set_op is None else (set_op & tag_to_operators[tag_list[i]])
@@ -69,8 +69,8 @@ def load_operator_list(file_name: str) -> list[Operator]:
 
     return res
 
-def invert_operator_list(operator_list: list[Operator]) -> dict[str, set[str]]:
-    tag_to_operators: dict[str, set[str]] = defaultdict(set)
+def invert_operator_list(operator_list: list[Operator]) -> dict[str, set[Operator]]:
+    tag_to_operators: dict[str, set[Operator]] = defaultdict(set)
     for op in operator_list:
         for tag in op.tags:
             tag_to_operators[tag].add(op)
