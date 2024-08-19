@@ -1,11 +1,47 @@
-from collections import defaultdict, namedtuple
-Operator = namedtuple('Operator', ['name', 'tags', 'rarity'])
+from collections import defaultdict
+from typing import NamedTuple
+import logging
+
+class Operator(NamedTuple):
+    name: str
+    tags: tuple[str]
+    rarity: int
+
 
 def main():
     file_name = 'operators_in_recruitment_with_rarity.csv'
     operator_list = load_operator_list(file_name)
     tag_to_operators = invert_operator_list(operator_list)
-    print(tag_to_operators)
+
+    tag_list = ['牽制', '火力', '狙撃タイプ', '防御', '範囲攻撃']
+    res = find_rare_operator_tag_combinations(tag_list, tag_to_operators)
+    print(*res, sep='\n')
+
+def find_rare_operator_tag_combinations(
+        tag_list: list[str],
+        tag_to_operators: dict[str, list[Operator]]
+        ) -> list[dict[tuple[str], list[Operator]]]:
+    if len(tag_list) < 5:
+        logging.warning(f'募集タグの個数が少ないです: {len(tag_list)}個')
+    tag_list.sort()
+
+    res = []
+
+    for comb in range(1 << len(tag_list)):
+        tags_in_comb: list[str] = []
+        set_op = None
+        for i in range(len(tag_list)):
+            if comb & (1 << i) > 0:
+                set_op = tag_to_operators[tag_list[i]] if set_op is None else (set_op & tag_to_operators[tag_list[i]])
+                tags_in_comb.append(tag_list[i])
+        if set_op and all(map(lambda op: op.rarity > 3, set_op)):
+            ops = sorted(list(set_op))
+            if '上級エリート' not in tags_in_comb:
+                ops = list(filter(lambda op: op.rarity < 6, ops))
+            if ops:
+                res.append({tuple(tags_in_comb): ops})
+
+    return res
 
 def load_tag_list(file_name: str) -> list[str]:
     with open(file_name, 'r') as file:
@@ -29,7 +65,7 @@ def load_operator_list(file_name: str) -> list[Operator]:
                 tags.append('エリート')
             else:
                 pass
-            res.append(Operator(row['名前'],tags, row['レアリティ']))
+            res.append(Operator(row['名前'], tuple(tags), int(row['レアリティ'])))
 
     return res
 
@@ -37,7 +73,7 @@ def invert_operator_list(operator_list: list[Operator]) -> dict[str, set[str]]:
     tag_to_operators: dict[str, set[str]] = defaultdict(set)
     for op in operator_list:
         for tag in op.tags:
-            tag_to_operators[tag].add(op.name)
+            tag_to_operators[tag].add(op)
     return tag_to_operators
 
 
