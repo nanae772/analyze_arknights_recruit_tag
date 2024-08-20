@@ -26,7 +26,8 @@ def main():
     tag_to_operators: dict[str, set[Operator]] = invert_operator_list(operator_list)
 
     tag_list = ['牽制', '火力', '狙撃タイプ', '防御', '範囲攻撃']
-    res: list[dict[tuple[str, ...], list[Operator]]] = find_rare_operator_tag_combinations(tag_list, tag_to_operators)
+    res: list[dict[tuple[str, ...], list[Operator]]] = find_rare_operator_tag_combinations(
+        tag_list, tag_to_operators)
     print(*res, sep='\n')
 
 
@@ -56,7 +57,8 @@ def find_rare_operator_tag_combinations(
         set_op: set[Operator] | None = None
         for i, tag in enumerate(tag_list):
             if comb & (1 << i) > 0:
-                set_op = tag_to_operators[tag] if set_op is None else (set_op & tag_to_operators[tag])
+                set_op = tag_to_operators[tag] if set_op is None else \
+                    set_op & tag_to_operators[tag]
                 tags_in_comb.append(tag)
         if set_op and all(map(lambda op: op.rarity > 3, set_op)):
             ops = sorted(list(set_op))
