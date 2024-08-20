@@ -2,9 +2,10 @@ from collections import defaultdict
 from typing import NamedTuple
 import logging
 
+
 class Operator(NamedTuple):
     name: str
-    tags: tuple[str,...]
+    tags: tuple[str, ...]
     rarity: int
 
 
@@ -14,13 +15,14 @@ def main():
     tag_to_operators: dict[str, set[Operator]] = invert_operator_list(operator_list)
 
     tag_list = ['牽制', '火力', '狙撃タイプ', '防御', '範囲攻撃']
-    res: list[dict[tuple[str,...], list[Operator]]] = find_rare_operator_tag_combinations(tag_list, tag_to_operators)
+    res: list[dict[tuple[str, ...], list[Operator]]] = find_rare_operator_tag_combinations(tag_list, tag_to_operators)
     print(*res, sep='\n')
+
 
 def find_rare_operator_tag_combinations(
         tag_list: list[str],
         tag_to_operators: dict[str, set[Operator]]
-        ) -> list[dict[tuple[str,...], list[Operator]]]:
+) -> list[dict[tuple[str, ...], list[Operator]]]:
     if len(tag_list) < 5:
         logging.warning(f'募集タグの個数が少ないです: {len(tag_list)}個')
     tag_list.sort()
@@ -43,11 +45,13 @@ def find_rare_operator_tag_combinations(
 
     return res
 
+
 def load_tag_list(file_name: str) -> list[str]:
     with open(file_name, 'r', encoding='utf-8') as file:
         content = file.read()
         all_tag: list[str] = content.split('\n')
         return all_tag
+
 
 def load_operator_list(file_name: str) -> list[Operator]:
     import csv
@@ -70,6 +74,7 @@ def load_operator_list(file_name: str) -> list[Operator]:
 
     return res
 
+
 def invert_operator_list(operator_list: list[Operator]) -> dict[str, set[Operator]]:
     tag_to_operators: dict[str, set[Operator]] = defaultdict(set)
     for op in operator_list:
@@ -86,6 +91,7 @@ def split_string_by_tags(s: str, all_tag: list[str]) -> list[str]:
         s = s[len(match):]
     result.sort()
     return result
+
 
 if __name__ == '__main__':
     main()
