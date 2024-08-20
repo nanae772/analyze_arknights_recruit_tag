@@ -44,7 +44,7 @@ def find_rare_operator_tag_combinations(
     return res
 
 def load_tag_list(file_name: str) -> list[str]:
-    with open(file_name, 'r') as file:
+    with open(file_name, 'r', encoding='utf-8') as file:
         content = file.read()
         all_tag: list[str] = content.split('\n')
         return all_tag
