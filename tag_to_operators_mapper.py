@@ -46,7 +46,7 @@ def find_rare_operator_tag_combinations(
             募集タグの組合せ→その組合せで出るオペレーターのリスト、のリスト
     '''
     if len(tag_list) < 5:
-        logging.warning(f'募集タグの個数が少ないです: {len(tag_list)}個')
+        logging.warning('募集タグの個数が少ないです: %s個', len(tag_list))
     tag_list.sort()
 
     res = []
@@ -54,10 +54,10 @@ def find_rare_operator_tag_combinations(
     for comb in range(1 << len(tag_list)):
         tags_in_comb: list[str] = []
         set_op: set[Operator] | None = None
-        for i in range(len(tag_list)):
+        for i, tag in enumerate(tag_list):
             if comb & (1 << i) > 0:
-                set_op = tag_to_operators[tag_list[i]] if set_op is None else (set_op & tag_to_operators[tag_list[i]])
-                tags_in_comb.append(tag_list[i])
+                set_op = tag_to_operators[tag] if set_op is None else (set_op & tag_to_operators[tag])
+                tags_in_comb.append(tag)
         if set_op and all(map(lambda op: op.rarity > 3, set_op)):
             ops = sorted(list(set_op))
             if '上級エリート' not in tags_in_comb:
