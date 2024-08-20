@@ -17,7 +17,7 @@ class Operator(NamedTuple):
     rarity: int
 
 
-def main():
+def main() -> None:
     '''
     メイン関数
     '''
