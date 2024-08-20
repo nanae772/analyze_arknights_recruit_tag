@@ -1,6 +1,7 @@
 from collections import defaultdict
 from typing import NamedTuple
 import logging
+import csv
 
 
 class Operator(NamedTuple):
@@ -54,8 +55,6 @@ def load_tag_list(file_name: str) -> list[str]:
 
 
 def load_operator_list(file_name: str) -> list[Operator]:
-    import csv
-
     res = []
     all_tag = load_tag_list('all_tag.txt')
 
