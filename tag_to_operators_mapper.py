@@ -117,6 +117,16 @@ def invert_operator_list(operator_list: list[Operator]) -> dict[str, set[Operato
 def split_string_by_tags(s: str, all_tag: list[str]) -> list[str]:
     '''
     空白無しで結合された複数の募集タグの文字列から、募集タグを分割したリストを作成
+
+    Args:
+        s: タグ同士が結合された文字列
+
+    Returns:
+        募集タグ１つずつに分解されたリスト
+
+    Examples:
+        >>> split_string_by_tags('近距離火力支援', all_tag)
+        ['支援', '火力', '近距離']
     '''
     result = []
     while s:
