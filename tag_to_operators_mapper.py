@@ -128,11 +128,22 @@ def split_string_by_tags(s: str, all_tag: list[str]) -> list[str]:
         >>> split_string_by_tags('近距離火力支援', all_tag)
         ['支援', '火力', '近距離']
     '''
-    result = []
+    result: list[str] = []
+    original_s = s
     while s:
-        match = next(word for word in all_tag if s.startswith(word))
-        result.append(match)
-        s = s[len(match):]
+        tag_match: str | None = None
+        index_match: int = -1
+        for tag in all_tag:
+            if tag and s.find(tag) > -1:
+                tag_match = tag
+                index_match = s.find(tag)
+                break
+        if tag_match is None:
+            break
+        result.append(tag_match)
+        s = s[:index_match] + s[index_match + len(tag_match):]
+    if s:
+        logging.warning('想定外の募集タグ文字列です: %s', original_s)
     result.sort()
     return result
 
