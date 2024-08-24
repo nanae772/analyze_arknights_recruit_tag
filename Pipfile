@@ -8,6 +8,8 @@ pandas = "*"
 mypy = "*"
 pylint = "*"
 pytest = "*"
+google-cloud-vision = "*"
+google-cloud = "*"
 
 [dev-packages]
 
