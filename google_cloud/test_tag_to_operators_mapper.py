@@ -5,7 +5,7 @@ tag_to_operators_mapper.py の単体テストモジュール
 from tag_to_operators_mapper import split_string_by_tags, load_tag_list
 from tag_to_operators_mapper import invert_operator_list, Operator
 
-all_tag = load_tag_list('all_tag.txt')
+all_tag = load_tag_list('google_cloud/all_tag.txt')
 
 
 class TestSplitStringByTags:
