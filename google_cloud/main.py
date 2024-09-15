@@ -12,7 +12,9 @@ def detect_text(request):
         client = vision.ImageAnnotatorClient()
         image = vision.Image(content=image_data)
         response = client.text_detection(image=image)
-        texts = response.text_annotations
+        texts = response.text_annotations[0].description
+
+        print(texts)
 
         tag_list = get_tag_list(texts)
         result_message = obtain_result_message(tag_list)
