@@ -17,6 +17,9 @@ def detect_text(request):
         print(texts)
 
         tag_list = get_tag_list(texts)
+
+        print(tag_list)
+
         result_message = obtain_result_message(tag_list)
 
         return result_message

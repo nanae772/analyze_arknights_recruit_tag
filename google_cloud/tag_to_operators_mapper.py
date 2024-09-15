@@ -114,6 +114,7 @@ def load_tag_list(file_name: str) -> list[str]:
     with open(file_name, 'r', encoding='utf-8') as file:
         content = file.read()
         all_tag: list[str] = content.split('\n')
+        all_tag = list(filter(lambda x: x, all_tag))  # 空文字列を取り除く
         return all_tag
 
 
