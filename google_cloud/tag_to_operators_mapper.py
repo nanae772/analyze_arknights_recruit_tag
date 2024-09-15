@@ -26,15 +26,52 @@ def main() -> None:
     tag_to_operators: dict[str, set[Operator]] = invert_operator_list(operator_list)
 
     tag_list = ['牽制', '火力', '狙撃タイプ', '防御', '範囲攻撃']
-    res: list[dict[tuple[str, ...], list[Operator]]] = find_rare_operator_tag_combinations(
-        tag_list, tag_to_operators)
-    print(*res, sep='\n')
+    res = find_rare_operator_tag_combinations(tag_list, tag_to_operators)
+    print(*res.items(), sep='\n')
+
+
+def obtain_result_message(tag_list: list[str]) -> str:
+    """結果を求めて、Discordに返信するメッセージを生成する"""
+    file_name = 'operators_in_recruitment_with_rarity.csv'
+    operator_list: list[Operator] = load_operator_list(file_name)
+    tag_to_operators: dict[str, set[Operator]] = invert_operator_list(operator_list)
+    rare_op_tag_combinations = find_rare_operator_tag_combinations(tag_list, tag_to_operators)
+
+    if not rare_op_tag_combinations:
+        return '星4以上が確定する組合せは見つかりませんでした…'
+
+    result_mes = ''
+
+    for tag_comb, operator_list in rare_op_tag_combinations.items():
+        tag_comb_str = ', '.join(tag_comb)
+        ope_list_str = ', '.join(map(lambda op: op.name, operator_list))
+        result_mes += f'タグの組合せ: {tag_comb_str}\n出現するオペレーター: {ope_list_str}\n'
+
+    return result_mes
+
+
+def get_tag_list(texts: str) -> list[str]:
+    """画像から抽出されたテキストからタグの文字列だけを抜き出したリストを作成"""
+    all_tag = load_tag_list('all_tag.txt')
+
+    tag_list = []
+
+    for tag in all_tag:
+        if tag in texts:
+            tag_list.append(tag)
+
+    if len(tag_list) < 5:
+        logging.warning('タグの個数が少ないです: %s', len(tag_list))
+    if len(tag_list) > 5:
+        logging.warning('タグの個数が多すぎます: %s', len(tag_list))
+
+    return tag_list
 
 
 def find_rare_operator_tag_combinations(
         tag_list: list[str],
         tag_to_operators: dict[str, set[Operator]]
-) -> list[dict[tuple[str, ...], list[Operator]]]:
+) -> dict[tuple[str, ...], list[Operator]]:
     '''
     募集タグの組合せから星４以上のオペレーターが確定する組合せを探す
 
@@ -50,7 +87,7 @@ def find_rare_operator_tag_combinations(
         logging.warning('募集タグの個数が少ないです: %s個', len(tag_list))
     tag_list.sort()
 
-    res = []
+    res = dict()
 
     for comb in range(1 << len(tag_list)):
         tags_in_comb: list[str] = []
@@ -65,7 +102,7 @@ def find_rare_operator_tag_combinations(
             if '上級エリート' not in tags_in_comb:
                 ops = list(filter(lambda op: op.rarity < 6, ops))
             if ops:
-                res.append({tuple(tags_in_comb): ops})
+                res[tuple(tags_in_comb)] = ops
 
     return res
 

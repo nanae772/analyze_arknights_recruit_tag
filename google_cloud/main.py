@@ -1,5 +1,6 @@
 import base64
 from google.cloud import vision
+from tag_to_operators_mapper import obtain_result_message, get_tag_list
 
 
 def detect_text(request):
@@ -13,6 +14,9 @@ def detect_text(request):
         response = client.text_detection(image=image)
         texts = response.text_annotations
 
-        return texts[0].description
+        tag_list = get_tag_list(texts)
+        result_message = obtain_result_message(tag_list)
+
+        return result_message
     else:
         return 'Error'
