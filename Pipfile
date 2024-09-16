@@ -13,6 +13,8 @@ google-cloud = "*"
 "discord.py" = "*"
 requests = "*"
 types-requests = "*"
+pyyaml = "*"
+types-pyyaml = "*"
 
 [dev-packages]
 
