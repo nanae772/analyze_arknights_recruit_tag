@@ -17,7 +17,10 @@ def detect_text(request):
         # Cloud Vision APIでテキスト抽出
         client = vision.ImageAnnotatorClient()
         image = vision.Image(content=image_data)
-        response = client.text_detection(image=image)
+        response = client.text_detection(
+            image=image,
+            image_context={"language_hints": ["ja"]}
+        )
         texts = response.text_annotations[0].description
 
         print(texts)
