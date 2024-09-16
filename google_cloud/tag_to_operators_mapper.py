@@ -31,15 +31,16 @@ def obtain_result_message(tag_list: list[str]) -> str:
     tag_to_operators: dict[str, set[Operator]] = invert_operator_list(operator_list)
     rare_op_tag_combinations = find_rare_operator_tag_combinations(tag_list, tag_to_operators)
 
-    if not rare_op_tag_combinations:
-        return '星4以上が確定する組合せは見つかりませんでした…'
+    result_mes = f"検出されたタグ: {','.join(tag_list)}\n\n"
 
-    result_mes = ''
+    if not rare_op_tag_combinations:
+        result_mes += '星4以上が確定する組合せは見つかりませんでした…\n'
+        return result_mes
 
     for tag_comb, operator_list in rare_op_tag_combinations.items():
         tag_comb_str = ', '.join(tag_comb)
         ope_list_str = ', '.join(map(lambda op: op.name, operator_list))
-        result_mes += f'タグの組合せ: {tag_comb_str}\n出現するオペレーター: {ope_list_str}\n'
+        result_mes += f'タグの組合せ: {tag_comb_str}\n出現するオペレーター: {ope_list_str}\n\n'
 
     return result_mes
 
