@@ -2,11 +2,19 @@
 アークナイツの公開求人の画像をアップロードして、星４以上確定するタグの組合せをDiscordのWebhookに送る
 """
 import base64
+from logging import getLogger, StreamHandler, DEBUG
 import json
 import os
 import requests
 from google.cloud import vision
 from tag_to_operators_mapper import obtain_result_message, get_tag_list
+
+logger = getLogger(__name__)
+handler = StreamHandler()
+handler.setLevel(DEBUG)
+logger.setLevel(DEBUG)
+logger.addHandler(handler)
+logger.propagate = False
 
 
 def detect_text(request):
@@ -23,11 +31,11 @@ def detect_text(request):
         )
         texts = response.text_annotations[0].description
 
-        print(texts)
+        logger.info(texts)
 
         tag_list = get_tag_list(texts)
 
-        print(tag_list)
+        logger.info(tag_list)
 
         result_message = obtain_result_message(tag_list)
         send_content_to_discord_webhook(result_message)

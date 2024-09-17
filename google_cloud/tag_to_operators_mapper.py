@@ -2,8 +2,15 @@
 
 from collections import defaultdict
 from typing import NamedTuple
-import logging
+from logging import getLogger, StreamHandler, DEBUG
 import csv
+
+logger = getLogger(__name__)
+handler = StreamHandler()
+handler.setLevel(DEBUG)
+logger.setLevel(DEBUG)
+logger.addHandler(handler)
+logger.propagate = False
 
 
 class Operator(NamedTuple):
@@ -56,9 +63,9 @@ def get_tag_list(texts: str) -> list[str]:
             tag_list.append(tag)
 
     if len(tag_list) < 5:
-        logging.warning('タグの個数が少ないです: %s', len(tag_list))
+        logger.warning('タグの個数が少ないです: %s', len(tag_list))
     if len(tag_list) > 5:
-        logging.warning('タグの個数が多すぎます: %s', len(tag_list))
+        logger.warning('タグの個数が多すぎます: %s', len(tag_list))
 
     return tag_list
 
@@ -79,7 +86,7 @@ def find_rare_operator_tag_combinations(
             募集タグの組合せ→その組合せで出るオペレーターのリスト、のリスト
     """
     if len(tag_list) < 5:
-        logging.warning('募集タグの個数が少ないです: %s個', len(tag_list))
+        logger.warning('募集タグの個数が少ないです: %s個', len(tag_list))
     tag_list.sort()
 
     res = dict()
@@ -170,7 +177,7 @@ def split_string_by_tags(s: str, all_tag: list[str]) -> list[str]:
         result.append(tag_match)
         s = s[:index_match] + s[index_match + len(tag_match):]
     if s:
-        logging.warning('想定外の募集タグ文字列です: %s', original_s)
+        logger.warning('想定外の募集タグ文字列です: %s', original_s)
     result.sort()
     return result
 
